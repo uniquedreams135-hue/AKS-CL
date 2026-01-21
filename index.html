@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" id="html">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AKS-CL 💰</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg-primary: #f9fafb;
+      --card-bg: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --accent: #4f46e5;
+      --accent-dark: #4338ca;
+      --success: #10b981;
+      --border: #e2e8f0;
+      --shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
+      --transition: all 0.3s ease;
+    }
+
+    .dark {
+      --bg-primary: #0f172a;
+      --card-bg: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --border: #334155;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+      background: var(--card-bg);      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .header {
+      background: linear-gradient(120deg, #4f46e5, #7e22ce);
+      color: white;
+      text-align: center;
+      padding: 32px 20px;
+      position: relative;
+    }
+
+    #themeToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+      backdrop-filter: blur(6px);
+      transition: var(--transition);
+    }
+
+    #themeToggle:hover {
+      background: rgba(255,255,255,0.3);
+      transform: rotate(25deg) scale(1.1);
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      opacity: 0.95;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .form {
+      padding: 32px;    }
+
+    .input-group {
+      margin-bottom: 26px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      font-size: 17px;
+      background: var(--card-bg);
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.25);
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 10px 16px;
+      border-radius: 14px;
+      background: var(--bg-primary);
+      transition: var(--transition);
+      border: 2px solid transparent;    }
+
+    .radio-option:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .radio-option input {
+      width: auto;
+    }
+
+    #calculateBtn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(to right, var(--accent), #7e22ce);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 19px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: var(--transition);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+      letter-spacing: 0.5px;
+    }
+
+    #calculateBtn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(79, 70, 229, 0.6);
+    }
+
+    #result {
+      margin-top: 28px;
+      padding: 24px;
+      background: var(--bg-primary);
+      border-radius: 18px;
+      border-left: 5px solid var(--accent);
+      display: none;
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;        transform: translateY(0);
+      }
+    }
+
+    #result h3 {
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #result p {
+      margin: 10px 0;
+      font-size: 17px;
+      color: var(--text-primary);
+    }
+
+    .highlight {
+      color: var(--accent-dark);
+      font-weight: 700;
+    }
+
+    .formula {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border);
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .formula i {
+      color: var(--accent);
+    }
+
+    #downloadBtn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(to right, var(--success), #059669);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 22px;
+      display: none;      transition: var(--transition);
+      box-shadow: 0 5px 14px rgba(16, 185, 129, 0.35);
+    }
+
+    #downloadBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 18px rgba(16, 185, 129, 0.5);
+    }
+
+    @media (max-width: 560px) {
+      .header h1 { font-size: 28px; }
+      .form { padding: 24px; }
+      .radio-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <button id="themeToggle" title="Toggle Dark Mode">
+      <i class="fas fa-moon"></i>
+    </button>
+    <h1>AKS-CL</h1>
+    <p>Enter details → Click <strong>Calculate</strong> → Download results!</p>
+  </div>
+
+  <div class="form">
+    <div class="input-group">
+      <label><i class="fas fa-rupee-sign"></i> Monthly Salary (₹)</label>
+      <input type="number" id="salary" placeholder="e.g., 45000" min="0" step="any">
+    </div>
+
+    <div class="input-group">
+      <label><i class="fas fa-calendar-day"></i> Working Days</label>
+      <input type="number" id="days" placeholder="e.g., 24" min="0" step="any">
+    </div>
+
+    <div class="input-group">
+      <label><i class="fas fa-balance-scale"></i> Calculation Basis</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="basis" value="30" checked> 30 Days (Calendar)
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="basis" value="26"> 26 Days (Working)
+        </label>
+      </div>
+    </div>
+    <button id="calculateBtn" onclick="calculateSalary()">
+      <i class="fas fa-calculator"></i> Calculate Salary
+    </button>
+
+    <div id="result">
+      <h3><i class="fas fa-chart-line"></i> Your Earnings Summary</h3>
+      <p><strong>Monthly Salary:</strong> <span class="highlight" id="displaySalary">—</span></p>
+      <p><strong>Daily Rate:</strong> <span class="highlight" id="dailySalary">—</span></p>
+      <p><strong>Total for <span id="workedDays">0</span> days:</strong> <span class="highlight" id="totalSalary">—</span></p>
+      <div class="formula">
+        <i class="fas fa-info-circle"></i>
+        Formula: (Monthly Salary ÷ <span id="basisUsed">30</span>) × Working Days
+      </div>
+    </div>
+
+    <button id="downloadBtn" onclick="downloadTextFile()">
+      <i class="fas fa-file-download"></i> Download as Text
+    </button>
+  </div>
+</div>
+
+<script>
+  const salaryInput = document.getElementById("salary");
+  const daysInput = document.getElementById("days");
+  const resultDiv = document.getElementById("result");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const themeToggle = document.getElementById("themeToggle");
+  const htmlEl = document.getElementById("html");
+
+  // Load saved data
+  window.addEventListener("load", () => {
+    salaryInput.value = localStorage.getItem("salary") || "";
+    daysInput.value = localStorage.getItem("days") || "";
+    const savedBasis = localStorage.getItem("basis") || "30";
+    document.querySelector(`input[name="basis"][value="${savedBasis}"]`).checked = true;
+    updateThemeIcon();
+    if (localStorage.getItem("theme") === "dark") {
+      htmlEl.classList.add("dark");
+    }
+  });
+
+  // Save on input change
+  [salaryInput, daysInput].forEach(el => {
+    el.addEventListener("input", () => {
+      localStorage.setItem(el.id, el.value);
+    });
+  });
+
+  document.querySelectorAll('input[name="basis"]').forEach(radio => {
+    radio.addEventListener("change", () => {      localStorage.setItem("basis", radio.value);
+    });
+  });
+
+  function formatINR(amount) {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2
+    }).format(amount);
+  }
+
+  function calculateSalary() {
+    const salary = parseFloat(salaryInput.value);
+    const days = parseFloat(daysInput.value);
+    const basis = parseFloat(document.querySelector('input[name="basis"]:checked').value);
+
+    if (isNaN(salary) || isNaN(days) || salary < 0 || days < 0) {
+      alert("⚠️ Please enter valid positive numbers for salary and days.");
+      resultDiv.style.display = "none";
+      downloadBtn.style.display = "none";
+      return;
+    }
+
+    const dailyRate = salary / basis;
+    const total = dailyRate * days;
+
+    document.getElementById("displaySalary").textContent = formatINR(salary);
+    document.getElementById("dailySalary").textContent = formatINR(dailyRate);
+    document.getElementById("workedDays").textContent = days;
+    document.getElementById("totalSalary").textContent = formatINR(total);
+    document.getElementById("basisUsed").textContent = basis;
+
+    resultDiv.style.display = "block";
+    downloadBtn.style.display = "block";
+  }
+
+  function downloadTextFile() {
+    const salary = parseFloat(salaryInput.value);
+    const days = parseFloat(daysInput.value);
+    const basis = parseFloat(document.querySelector('input[name="basis"]:checked').value);
+    const dailyRate = salary / basis;
+    const total = dailyRate * days;
+
+    const content = `AKS-CL - Salary Calculation Report
+========================================
+
+Monthly Salary: ${formatINR(salary)}
+Calculation Basis: ${basis} days per month
+Working Days: ${days}
+Daily Rate: ${formatINR(dailyRate)}
+Total Payable: ${formatINR(total)}
+
+Formula Used:
+(Monthly Salary ÷ ${basis}) × ${days} = ${formatINR(total)}
+
+Generated on: ${new Date().toLocaleString()}
+`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `AKS-CL_Salary_Report_${new Date().toISOString().slice(0,10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Theme Toggle
+  themeToggle.addEventListener("click", () => {
+    htmlEl.classList.toggle("dark");
+    updateThemeIcon();
+    localStorage.setItem("theme", htmlEl.classList.contains("dark") ? "dark" : "light");
+  });
+
+  function updateThemeIcon() {
+    const isDark = htmlEl.classList.contains("dark");
+    themeToggle.innerHTML = isDark 
+      ? '<i class="fas fa-sun"></i>' 
+      : '<i class="fas fa-moon"></i>';
+  }
+</script>
+
+</body>
+</html>
