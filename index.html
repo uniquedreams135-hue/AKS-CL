@@ -1,430 +1,828 @@
 <!DOCTYPE html>
-<html lang="en" id="html">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AKS-CL 💰</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <title>AKS-CL Attendance & Salary</title>
   <style>
-    :root {
-      --bg-primary: #f9fafb;
-      --card-bg: #ffffff;
-      --text-primary: #1e293b;
-      --text-secondary: #64748b;
-      --accent: #4f46e5;
-      --accent-dark: #4338ca;
-      --success: #10b981;
-      --border: #e2e8f0;
-      --shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
-      --transition: all 0.3s ease;
-    }
-
-    .dark {
-      --bg-primary: #0f172a;
-      --card-bg: #1e293b;
-      --text-primary: #f1f5f9;
-      --text-secondary: #cbd5e1;
-      --border: #334155;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #4A00E0 0%, #8E2DE2 100%);
       min-height: 100vh;
+      padding: 20px;
+      animation: gradientShift 15s ease infinite;
+      background-size: 400% 400%;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Password Modal */
+    #passwordModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      z-index: 3000;
+    }
+
+    .password-box {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);    }
+
+    .password-box h2 {
+      color: #6a0dad;
+      margin-bottom: 20px;
+    }
+
+    #passwordInput {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    #submitPassword {
+      background: linear-gradient(45deg, #8E2DE2, #6a0dad);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    #passwordError {
+      color: #e74c3c;
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 16px;
+      min-height: 24px;
     }
 
     .container {
-      width: 100%;
-      max-width: 540px;
-      background: var(--card-bg);      border-radius: 26px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      transition: var(--transition);
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .header {
-      background: linear-gradient(120deg, #4f46e5, #7e22ce);
-      color: white;
+    h1 {
       text-align: center;
-      padding: 32px 20px;
+      color: white;
+      margin-bottom: 20px;
+      font-size: 32px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .salary-input-section {      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    #salaryInput {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      width: 180px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    #updateSalaryBtn {
+      padding: 12px 20px;
+      background: linear-gradient(45deg, #6a0dad, #9b59b6);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transition: all 0.3s ease;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 15px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      position: relative;
+      overflow: hidden;    }
+
+    .export-btn { background: linear-gradient(45deg, #00b09b, #96c93d); }
+    .import-btn { background: linear-gradient(45deg, #8E2DE2, #4A00E0); }
+    .reset-btn { background: linear-gradient(45deg, #6a0dad, #9b59b6); }
+
+    .btn:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    }
+
+    .salary-summary {
+      background: linear-gradient(45deg, #8E2DE2, #4A00E0);
+      color: white;
+      padding: 18px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: bold;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .month-section {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(74, 0, 224, 0.2);
+      padding: 22px;
+      margin-bottom: 25px;
+      transition: transform 0.3s ease;
       position: relative;
     }
 
-    #themeToggle {
+    .print-btn {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(255,255,255,0.2);
+      top: 15px;
+      right: 15px;
+      background: #6a0dad;
+      color: white;
       border: none;
-      width: 42px;
-      height: 42px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      color: white;
+      font-weight: bold;
       cursor: pointer;
-      font-size: 18px;
-      backdrop-filter: blur(6px);
-      transition: var(--transition);
-    }
-
-    #themeToggle:hover {
-      background: rgba(255,255,255,0.3);
-      transform: rotate(25deg) scale(1.1);
-    }
-
-    .header h1 {
-      font-size: 32px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-    }
-
-    .header p {
-      opacity: 0.95;
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    .form {
-      padding: 32px;    }
-
-    .input-group {
-      margin-bottom: 26px;
-    }
-
-    .input-group label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: 700;
-      color: var(--text-primary);
-      font-size: 16px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: all 0.2s;
+      z-index: 10;    }
+
+    .print-btn:hover {
+      background: #8e2de2;
+      transform: scale(1.1);
     }
 
-    .input-group input {
-      width: 100%;
-      padding: 15px;
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      font-size: 17px;
-      background: var(--card-bg);
-      color: var(--text-primary);
-      transition: var(--transition);
-    }
-
-    .input-group input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.25);
-    }
-
-    .radio-group {
+    .month-header {
       display: flex;
-      gap: 16px;
-      margin-top: 10px;
-    }
-
-    .radio-option {
-      display: flex;
+      justify-content: space-between;
       align-items: center;
+      margin-bottom: 18px;
+      padding: 12px 48px 12px 16px; /* ← Extra right padding for print button */
+      background: linear-gradient(90deg, #6a0dad, #8E2DE2);
+      color: white;
+      border-radius: 12px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(74, 0, 224, 0.25);
+      position: relative;
+    }
+
+    .days-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
       gap: 8px;
+    }
+
+    .day-cell {
+      text-align: center;
+      padding: 8px 5px;
+      border-radius: 12px;
       cursor: pointer;
-      padding: 10px 16px;
-      border-radius: 14px;
-      background: var(--bg-primary);
-      transition: var(--transition);
-      border: 2px solid transparent;    }
-
-    .radio-option:hover {
-      background: var(--accent);
-      color: white;
-      transform: translateY(-2px);
+      transition: all 0.25s ease;
+      position: relative;
     }
 
-    .radio-option input {
-      width: auto;
+    .day-label {
+      font-size: 13px;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 4px;
     }
 
-    #calculateBtn {
+    .status-btn {
       width: 100%;
-      padding: 16px;
-      background: linear-gradient(to right, var(--accent), #7e22ce);
-      color: white;
+      padding: 6px 0;
       border: none;
-      border-radius: 16px;
-      font-size: 19px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: var(--transition);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
-      letter-spacing: 0.5px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
     }
 
-    #calculateBtn:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 22px rgba(79, 70, 229, 0.6);
+    .status-P { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+    .status-OF { background: linear-gradient(135deg, #f39c12, #d35400); color: white; }
+    .status-LV { 
+      background: linear-gradient(135deg, #9b59b6, #8e44ad); 
+      color: white;
+    }
+    .status-empty { background: linear-gradient(135deg, #ecf0f1, #bdc3c7); color: #7f8c8d; }
+
+    .lv-reason {
+      font-size: 10px;
+      color: #6c757d;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 2px;
     }
 
-    #result {
-      margin-top: 28px;
-      padding: 24px;
-      background: var(--bg-primary);
-      border-radius: 18px;
-      border-left: 5px solid var(--accent);
+    #leaveModal {
       display: none;
-      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
     }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;        transform: translateY(0);
-      }
+    .modal-content {
+      background: white;
+      margin: 10% auto;
+      padding: 25px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     }
 
-    #result h3 {
-      color: var(--text-primary);
-      margin-bottom: 16px;
-      font-size: 20px;
-      font-weight: 700;
+    .modal-content h3 {
+      margin-bottom: 15px;
+      color: #6a0dad;
+      text-align: center;
+    }
+    #leaveReasonInput {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-bottom: 15px;
+    }
+
+    .modal-buttons {
       display: flex;
-      align-items: center;
       gap: 10px;
     }
 
-    #result p {
-      margin: 10px 0;
-      font-size: 17px;
-      color: var(--text-primary);
-    }
-
-    .highlight {
-      color: var(--accent-dark);
-      font-weight: 700;
-    }
-
-    .formula {
-      margin-top: 20px;
-      padding-top: 18px;
-      border-top: 1px dashed var(--border);
-      font-size: 14px;
-      color: var(--text-secondary);
-      font-style: italic;
-    }
-
-    .formula i {
-      color: var(--accent);
-    }
-
-    #downloadBtn {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(to right, var(--success), #059669);
-      color: white;
+    .modal-btn {
+      flex: 1;
+      padding: 10px;
       border: none;
-      border-radius: 16px;
-      font-size: 18px;
-      font-weight: 700;
+      border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
-      margin-top: 22px;
-      display: none;      transition: var(--transition);
-      box-shadow: 0 5px 14px rgba(16, 185, 129, 0.35);
     }
 
-    #downloadBtn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 7px 18px rgba(16, 185, 129, 0.5);
+    #saveLeaveBtn {
+      background: linear-gradient(45deg, #8E2DE2, #6a0dad);
+      color: white;
     }
 
-    @media (max-width: 560px) {
-      .header h1 { font-size: 28px; }
-      .form { padding: 24px; }
-      .radio-group { flex-direction: column; }
+    #cancelLeaveBtn {
+      background: #ecf0f1;
+      color: #7f8c8d;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    @media print {
+      body {
+        background: white !important;
+        animation: none !important;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .month-section {
+        box-shadow: none !important;
+        border: 1px solid #ccc;
+      }      .print-btn {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .salary-input-section,
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      #salaryInput, .btn {
+        width: 90%;
+        max-width: 280px;
+      }
+      .days-row {
+        grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+      }
+      .day-cell { padding: 6px 3px; }
+      .status-btn { padding: 4px 0; font-size: 11px; }
+      .lv-reason { font-size: 9px; }
+      .month-header {
+        padding: 10px 44px 10px 12px; /* Slightly reduced on mobile */
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
-
-<div class="container">
-  <div class="header">
-    <button id="themeToggle" title="Toggle Dark Mode">
-      <i class="fas fa-moon"></i>
-    </button>
-    <h1>AKS-CL</h1>
-    <p>Enter details → Click <strong>Calculate</strong> → Download results!</p>
+  <!-- 🔒 Password Modal -->
+  <div id="passwordModal">
+    <div class="password-box">
+      <h2>🔒 Enter Password</h2>
+      <input type="password" id="passwordInput" placeholder="Enter password" maxlength="6" />
+      <button id="submitPassword">Unlock</button>
+      <div id="passwordError"></div>
+    </div>
   </div>
 
-  <div class="form">
-    <div class="input-group">
-      <label><i class="fas fa-rupee-sign"></i> Monthly Salary (₹)</label>
-      <input type="number" id="salary" placeholder="e.g., 45000" min="0" step="any">
+  <!-- Main App (initially hidden) -->
+  <div class="container" id="mainApp" style="display:none;">
+    <h1 class="no-print">AKS-CL Attendance & Salary Tracker</h1>
+
+    <div class="salary-input-section no-print">
+      <input type="number" id="salaryInput" placeholder="Enter monthly salary" min="1" value="16000" />
+      <button id="updateSalaryBtn">Update Salary</button>
     </div>
 
-    <div class="input-group">
-      <label><i class="fas fa-calendar-day"></i> Working Days</label>
-      <input type="number" id="days" placeholder="e.g., 24" min="0" step="any">
+    <div class="controls no-print">
+      <button class="btn export-btn" id="exportBtn">📥 Export Data (TXT)</button>      <button class="btn import-btn" id="importBtn">📤 Import Data (TXT)</button>
+      <button class="btn reset-btn" id="resetBtn">🗑️ Reset All Data</button>
     </div>
 
-    <div class="input-group">
-      <label><i class="fas fa-balance-scale"></i> Calculation Basis</label>
-      <div class="radio-group">
-        <label class="radio-option">
-          <input type="radio" name="basis" value="30" checked> 30 Days (Calendar)
-        </label>
-        <label class="radio-option">
-          <input type="radio" name="basis" value="26"> 26 Days (Working)
-        </label>
-      </div>
-    </div>
-    <button id="calculateBtn" onclick="calculateSalary()">
-      <i class="fas fa-calculator"></i> Calculate Salary
-    </button>
-
-    <div id="result">
-      <h3><i class="fas fa-chart-line"></i> Your Earnings Summary</h3>
-      <p><strong>Monthly Salary:</strong> <span class="highlight" id="displaySalary">—</span></p>
-      <p><strong>Daily Rate:</strong> <span class="highlight" id="dailySalary">—</span></p>
-      <p><strong>Total for <span id="workedDays">0</span> days:</strong> <span class="highlight" id="totalSalary">—</span></p>
-      <div class="formula">
-        <i class="fas fa-info-circle"></i>
-        Formula: (Monthly Salary ÷ <span id="basisUsed">30</span>) × Working Days
-      </div>
+    <input type="file" id="fileInput" accept=".txt">
+    <div class="salary-summary no-print" id="globalSummary">
+      Loading...
     </div>
 
-    <button id="downloadBtn" onclick="downloadTextFile()">
-      <i class="fas fa-file-download"></i> Download as Text
-    </button>
+    <div id="attendanceContainer"></div>
   </div>
-</div>
 
-<script>
-  const salaryInput = document.getElementById("salary");
-  const daysInput = document.getElementById("days");
-  const resultDiv = document.getElementById("result");
-  const downloadBtn = document.getElementById("downloadBtn");
-  const themeToggle = document.getElementById("themeToggle");
-  const htmlEl = document.getElementById("html");
+  <!-- Leave Reason Modal -->
+  <div id="leaveModal">
+    <div class="modal-content">
+      <h3>Leave Reason</h3>
+      <input type="text" id="leaveReasonInput" placeholder="e.g., Sick, Personal Work..." maxlength="50" />
+      <div class="modal-buttons">
+        <button class="modal-btn" id="saveLeaveBtn">Save</button>
+        <button class="modal-btn" id="cancelLeaveBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-  // Load saved data
-  window.addEventListener("load", () => {
-    salaryInput.value = localStorage.getItem("salary") || "";
-    daysInput.value = localStorage.getItem("days") || "";
-    const savedBasis = localStorage.getItem("basis") || "30";
-    document.querySelector(`input[name="basis"][value="${savedBasis}"]`).checked = true;
-    updateThemeIcon();
-    if (localStorage.getItem("theme") === "dark") {
-      htmlEl.classList.add("dark");
-    }
-  });
+  <script>
+    // === PASSWORD PROTECTION ===
+    const CORRECT_PASSWORD = "999897";
+    const passwordModal = document.getElementById('passwordModal');
+    const mainApp = document.getElementById('mainApp');
 
-  // Save on input change
-  [salaryInput, daysInput].forEach(el => {
-    el.addEventListener("input", () => {
-      localStorage.setItem(el.id, el.value);
+    document.getElementById('submitPassword').addEventListener('click', checkPassword);
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkPassword();
     });
-  });
 
-  document.querySelectorAll('input[name="basis"]').forEach(radio => {
-    radio.addEventListener("change", () => {      localStorage.setItem("basis", radio.value);
-    });
-  });
-
-  function formatINR(amount) {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 2
-    }).format(amount);
-  }
-
-  function calculateSalary() {
-    const salary = parseFloat(salaryInput.value);
-    const days = parseFloat(daysInput.value);
-    const basis = parseFloat(document.querySelector('input[name="basis"]:checked').value);
-
-    if (isNaN(salary) || isNaN(days) || salary < 0 || days < 0) {
-      alert("⚠️ Please enter valid positive numbers for salary and days.");
-      resultDiv.style.display = "none";
-      downloadBtn.style.display = "none";
-      return;
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      const errorEl = document.getElementById('passwordError');
+      
+      if (input === CORRECT_PASSWORD) {
+        passwordModal.style.display = 'none';
+        mainApp.style.display = 'block';
+        initializeApp();
+      } else {
+        errorEl.innerHTML = `🫵✊👊 u don't have access close this aks server`;
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+      }
     }
+    // === APP LOGIC ===
+    function initializeApp() {
+      let MONTHLY_SALARY = parseInt(localStorage.getItem('monthlySalary')) || 16000;
+      document.getElementById('salaryInput').value = MONTHLY_SALARY;
 
-    const dailyRate = salary / basis;
-    const total = dailyRate * days;
+      const months = [
+        { name: "SEP-2025", days: 30 },
+        { name: "OCT-2025", days: 31 },
+        { name: "NOV-2025", days: 30 },
+        { name: "DEC-2025", days: 31 },
+        { name: "JAN-2026", days: 31 },
+        { name: "FEB-2026", days: 28 },
+        { name: "MAR-2026", days: 31 },
+        { name: "APR-2026", days: 30 },
+        { name: "MAY-2026", days: 31 },
+        { name: "JUN-2026", days: 30 },
+        { name: "JUL-2026", days: 31 },
+        { name: "AUG-2026", days: 31 },
+        { name: "SEP-2026", days: 30 },
+        { name: "OCT-2026", days: 31 },
+        { name: "NOV-2026", days: 30 },
+        { name: "DEC-2026", days: 31 }
+      ];
 
-    document.getElementById("displaySalary").textContent = formatINR(salary);
-    document.getElementById("dailySalary").textContent = formatINR(dailyRate);
-    document.getElementById("workedDays").textContent = days;
-    document.getElementById("totalSalary").textContent = formatINR(total);
-    document.getElementById("basisUsed").textContent = basis;
+      let attendanceData = JSON.parse(localStorage.getItem('attendanceData')) || {};
 
-    resultDiv.style.display = "block";
-    downloadBtn.style.display = "block";
-  }
+      function checkTodayAttendance() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const monthIndex = today.getMonth();
+        const day = today.getDate();
 
-  function downloadTextFile() {
-    const salary = parseFloat(salaryInput.value);
-    const days = parseFloat(daysInput.value);
-    const basis = parseFloat(document.querySelector('input[name="basis"]:checked').value);
-    const dailyRate = salary / basis;
-    const total = dailyRate * days;
+        const monthNames = [
+          "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+          "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+        ];
+        const monthName = `${monthNames[monthIndex]}-${year}`;
+        
+        const monthConfig = months.find(m => m.name === monthName);
+        if (!monthConfig || day > monthConfig.days) return;
 
-    const content = `AKS-CL - Salary Calculation Report
-========================================
+        const monthId = monthName.replace(/-/g, '_').toLowerCase();
+        if (!attendanceData[monthId]) {
+          attendanceData[monthId] = {};
+          for (let i = 1; i <= monthConfig.days; i++) attendanceData[monthId][i] = '';
+        }
 
-Monthly Salary: ${formatINR(salary)}
-Calculation Basis: ${basis} days per month
-Working Days: ${days}
-Daily Rate: ${formatINR(dailyRate)}
-Total Payable: ${formatINR(total)}
+        const todayStatus = attendanceData[monthId][day];
+        if (!todayStatus || todayStatus === '') {
+          setTimeout(() => {            alert('⚠️ Aaj ka attendance abhi tak mark nahi kiya gaya hai!');
+          }, 1000);
+        }
+      }
 
-Formula Used:
-(Monthly Salary ÷ ${basis}) × ${days} = ${formatINR(total)}
+      function printMonth(monthName, monthId, totalDays) {
+        let printContent = `
+          <html>
+          <head>
+            <title>AKS-CL Attendance: ${monthName}</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              h2 { color: #6a0dad; text-align: center; margin-bottom: 20px; }
+              table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+              th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+              .P { background-color: #d4edda; color: #155724; }
+              .OF { background-color: #fff3cd; color: #856404; }
+              .LV { background-color: #f8d7da; color: #721c24; }
+              .empty { background-color: #f1f1f1; color: #666; }
+              .reason { font-size: 10px; color: #666; margin-top: 2px; }
+            </style>
+          </head>
+          <body>
+            <h2>AKS-CL Attendance Report: ${monthName}</h2>
+            <table>
+              <tr>
+        `;
 
-Generated on: ${new Date().toLocaleString()}
-`;
+        for (let d = 1; d <= totalDays; d++) {
+          printContent += `<th>${d}</th>`;
+        }
+        printContent += `</tr><tr>`;
 
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `AKS-CL_Salary_Report_${new Date().toISOString().slice(0,10)}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
+        for (let d = 1; d <= totalDays; d++) {
+          const record = attendanceData[monthId]?.[d] || '';
+          let status = '';
+          let reason = '';
+          let className = 'empty';
 
-  // Theme Toggle
-  themeToggle.addEventListener("click", () => {
-    htmlEl.classList.toggle("dark");
-    updateThemeIcon();
-    localStorage.setItem("theme", htmlEl.classList.contains("dark") ? "dark" : "light");
-  });
+          if (typeof record === 'object' && record.status === 'LV') {
+            status = 'LV';
+            reason = record.reason || '';
+            className = 'LV';
+          } else if (record === 'P') {
+            status = 'P';
+            className = 'P';
+          } else if (record === 'OF') {
+            status = 'OF';
+            className = 'OF';
+          } else {            status = '-';
+          }
+          printContent += `<td class="${className}">${status}${reason ? '<br><span class="reason">' + reason + '</span>' : ''}</td>`;
+        }
 
-  function updateThemeIcon() {
-    const isDark = htmlEl.classList.contains("dark");
-    themeToggle.innerHTML = isDark 
-      ? '<i class="fas fa-sun"></i>' 
-      : '<i class="fas fa-moon"></i>';
-  }
-</script>
+        printContent += `</tr></table></body></html>`;
 
+        const printWin = window.open('', '_blank');
+        printWin.document.write(printContent);
+        printWin.document.close();
+        printWin.focus();
+        printWin.print();
+      }
+
+      function updateSalary() {
+        const input = document.getElementById('salaryInput');
+        const value = parseInt(input.value);
+        if (isNaN(value) || value <= 0) {
+          alert('Please enter a valid salary amount.');
+          input.value = MONTHLY_SALARY;
+          return;
+        }
+        MONTHLY_SALARY = value;
+        localStorage.setItem('monthlySalary', MONTHLY_SALARY);
+        renderAttendance();
+        updateGlobalSummary();
+      }
+
+      function exportData() {
+        let txt = `AKS-CL Attendance Data Export\n`;
+        txt += `Period: SEP-2025 to DEC-2026\n`;
+        txt += `Monthly Salary: ₹${MONTHLY_SALARY}\n`;
+        txt += `Generated on: ${new Date().toLocaleString()}\n\n--- DATA ---\n\n`;
+
+        months.forEach(m => {
+          const monthId = m.name.replace(/-/g, '_').toLowerCase();
+          txt += `${m.name}:\n`;
+          for (let day = 1; day <= m.days; day++) {
+            const record = attendanceData[monthId]?.[day];
+            if (typeof record === 'object' && record.status === 'LV') {
+              txt += `${day}:LV|${record.reason || ''}\n`;
+            } else {
+              const status = record || '-';
+              txt += `${day}:${status}\n`;
+            }
+          }
+          txt += `\n`;
+        });
+
+        const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `aks-cl_attendance_${new Date().toISOString().slice(0,10)}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function importData(text) {
+        try {
+          const lines = text.split('\n');
+          let currentMonth = null;
+          const newData = {};
+
+          for (const line of lines) {
+            const cleanLine = line.trim();
+            if (!cleanLine || cleanLine.startsWith('AKS-CL') || cleanLine.startsWith('Period') || cleanLine.startsWith('Monthly Salary') || cleanLine.startsWith('Generated') || cleanLine === '--- DATA ---') {
+              continue;
+            }
+
+            if (cleanLine.endsWith(':')) {
+              currentMonth = cleanLine.slice(0, -1).replace(/-/g, '_').toLowerCase();
+              newData[currentMonth] = {};
+            } else if (currentMonth && cleanLine.includes(':')) {
+              const [dayStr, value] = cleanLine.split(':');
+              const day = parseInt(dayStr);
+              if (isNaN(day)) continue;
+
+              if (value.startsWith('LV|')) {
+                const reason = value.substring(3);
+                newData[currentMonth][day] = { status: 'LV', reason };
+              } else {
+                newData[currentMonth][day] = value === '-' ? '' : value;
+              }
+            }
+          }
+
+          const validMonths = months.map(m => m.name.replace(/-/g, '_').toLowerCase());
+          for (const key in newData) {
+            if (!validMonths.includes(key)) delete newData[key];
+          }
+
+          attendanceData = newData;
+          localStorage.setItem('attendanceData', JSON.stringify(attendanceData));
+          renderAttendance();
+          alert('✅ Data imported successfully!');
+        } catch (err) {
+          console.error(err);          alert('❌ Invalid file format.');
+        }
+      }
+
+      function resetData() {
+        if (confirm('⚠️ Delete all data?')) {
+          localStorage.removeItem('attendanceData');
+          attendanceData = {};
+          renderAttendance();
+        }
+      }
+
+      function isPaid(record) {
+        if (typeof record === 'object') return false;
+        return record === 'P' || record === 'OF';
+      }
+
+      function calculateMonthStats(monthId, totalDays) {
+        const records = attendanceData[monthId] || {};
+        let paidCount = 0;
+        for (let day = 1; day <= totalDays; day++) {
+          if (isPaid(records[day])) paidCount++;
+        }
+        const perDaySalary = MONTHLY_SALARY / totalDays;
+        const estimatedSalary = Math.round(paidCount * perDaySalary);
+        return { paidCount, estimatedSalary };
+      }
+
+      function updateGlobalSummary() {
+        let totalPaid = 0, totalEstimated = 0;
+        months.forEach(m => {
+          const stats = calculateMonthStats(m.name.replace(/-/g, '_').toLowerCase(), m.days);
+          totalPaid += stats.paidCount;
+          totalEstimated += stats.estimatedSalary;
+        });
+        document.getElementById('globalSummary').innerHTML = `
+          💰 Monthly Salary: ₹${MONTHLY_SALARY} | 
+          📅 Total Paid Days: ${totalPaid} | 
+          💵 Estimated Earnings: ₹${totalEstimated}
+        `;
+      }
+
+      let currentDayKey = null;
+
+      function openLeaveModal(monthId, day, currentReason = '') {
+        currentDayKey = { monthId, day };
+        document.getElementById('leaveReasonInput').value = currentReason;
+        document.getElementById('leaveModal').style.display = 'block';
+        document.getElementById('leaveReasonInput').focus();
+      }
+      function closeLeaveModal() {
+        document.getElementById('leaveModal').style.display = 'none';
+        currentDayKey = null;
+      }
+
+      function saveLeaveReason() {
+        if (!currentDayKey) return;
+        const reason = (document.getElementById('leaveReasonInput').value.trim() || 'No reason').substring(0, 50);
+        attendanceData[currentDayKey.monthId][currentDayKey.day] = { status: 'LV', reason };
+        localStorage.setItem('attendanceData', JSON.stringify(attendanceData));
+        closeLeaveModal();
+        renderAttendance();
+        updateGlobalSummary();
+      }
+
+      function renderAttendance() {
+        const container = document.getElementById('attendanceContainer');
+        container.innerHTML = '';
+
+        months.forEach(month => {
+          const monthId = month.name.replace(/-/g, '_').toLowerCase();
+          if (!attendanceData[monthId]) {
+            attendanceData[monthId] = {};
+            for (let i = 1; i <= month.days; i++) attendanceData[monthId][i] = '';
+          }
+
+          const stats = calculateMonthStats(monthId, month.days);
+          const monthDiv = document.createElement('div');
+          monthDiv.className = 'month-section';
+
+          const printBtn = document.createElement('button');
+          printBtn.className = 'print-btn no-print';
+          printBtn.innerHTML = '🖨️';
+          printBtn.title = `Print ${month.name}`;
+          printBtn.onclick = () => printMonth(month.name, monthId, month.days);
+          monthDiv.appendChild(printBtn);
+
+          const header = document.createElement('div');
+          header.className = 'month-header';
+          header.innerHTML = `${month.name} <span>✅ Paid: ${stats.paidCount} | 💵 ₹${stats.estimatedSalary}</span>`;
+
+          const daysRow = document.createElement('div');
+          daysRow.className = 'days-row';
+
+          for (let day = 1; day <= month.days; day++) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+
+            const label = document.createElement('div');            label.className = 'day-label';
+            label.textContent = day;
+            const record = attendanceData[monthId][day];
+            let status = '';
+            let reason = '';
+
+            if (typeof record === 'object' && record.status === 'LV') {
+              status = 'LV';
+              reason = record.reason || 'No reason';
+            } else {
+              status = record || '';
+            }
+
+            const btn = document.createElement('button');
+            btn.className = `status-btn status-${status || 'empty'}`;
+            btn.textContent = status || '-';
+
+            if (status === 'LV') {
+              const reasonEl = document.createElement('div');
+              reasonEl.className = 'lv-reason';
+              reasonEl.textContent = reason;
+              cell.appendChild(reasonEl);
+            }
+
+            btn.addEventListener('click', () => {
+              let nextStatus = '';
+              if (status === '') nextStatus = 'P';
+              else if (status === 'P') nextStatus = 'OF';
+              else if (status === 'OF') nextStatus = 'LV';
+              else if (status === 'LV') nextStatus = '';
+
+              if (nextStatus === 'LV') {
+                openLeaveModal(monthId, day, reason);
+              } else {
+                attendanceData[monthId][day] = nextStatus;
+                localStorage.setItem('attendanceData', JSON.stringify(attendanceData));
+                renderAttendance();
+                updateGlobalSummary();
+              }
+            });
+
+            cell.appendChild(label);
+            cell.appendChild(btn);
+            daysRow.appendChild(cell);
+          }
+
+          monthDiv.appendChild(header);
+          monthDiv.appendChild(daysRow);
+          container.appendChild(monthDiv);
+        });        updateGlobalSummary();
+      }
+
+      document.getElementById('updateSalaryBtn').addEventListener('click', updateSalary);
+      document.getElementById('salaryInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') updateSalary();
+      });
+
+      document.getElementById('exportBtn').addEventListener('click', exportData);
+      document.getElementById('importBtn').addEventListener('click', () => {
+        document.getElementById('fileInput').click();
+      });
+      document.getElementById('resetBtn').addEventListener('click', resetData);
+      document.getElementById('fileInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => importData(ev.target.result);
+          reader.readAsText(file);
+        }
+      });
+
+      document.getElementById('saveLeaveBtn').addEventListener('click', saveLeaveReason);
+      document.getElementById('cancelLeaveBtn').addEventListener('click', () => {
+        closeLeaveModal();
+        if (currentDayKey) {
+          const { monthId, day } = currentDayKey;
+          attendanceData[monthId][day] = 'OF';
+          localStorage.setItem('attendanceData', JSON.stringify(attendanceData));
+          renderAttendance();
+          updateGlobalSummary();
+        }
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target.id === 'leaveModal') closeLeaveModal();
+      });
+
+      renderAttendance();
+      checkTodayAttendance();
+    }
+  </script>
 </body>
 </html>
